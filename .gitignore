@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.env
+.env.local
+.vast-state.json
+*.log
+.DS_Store
+datasets/*.jsonl
+datasets/*.parquet
+checkpoints/
+wandb/
+__pycache__/
+*.pyc
+.venv/
+.uv/
+bun.lockb
