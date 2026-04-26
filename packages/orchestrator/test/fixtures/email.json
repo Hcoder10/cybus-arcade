@@ -1,0 +1,10 @@
+{
+  "event_type": "message.received",
+  "data": {
+    "from": "judge@anthropic.com",
+    "subject": "tower defense with a final boss",
+    "extracted_text": "Build a Roblox tower defense game with three enemy types and a final boss. The boss should be intimidating.",
+    "message_id": "<test-001@local>",
+    "inbox_id": "cybus-arcade@agentmail.to"
+  }
+}

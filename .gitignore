@@ -14,3 +14,18 @@ __pycache__/
 .venv/
 .uv/
 bun.lockb
+
+# Subagent-generated helper scripts (kept in ../cybus-arcade-leftovers/)
+datasets/sub/
+_gen_*.py
+gen_*.py
+_qc_*.py
+verify_*.py
+
+# Local secrets and runtime
+.env
+.env.local
+cybus.sqlite*
+*.log
+.vast-state.json
+checkpoints/

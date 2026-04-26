@@ -1,0 +1,22 @@
+{
+  "name": "@cybus-arcade/orchestrator",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "start": "bun src/index.ts",
+    "check": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "agentmail": "^0.0.40",
+    "hono": "^4.6.0",
+    "openai": "^4.78.0",
+    "svix": "^1.40.0"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.1.0",
+    "typescript": "^5.5.0"
+  }
+}
