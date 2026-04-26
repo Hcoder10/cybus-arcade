@@ -10,10 +10,10 @@ export function Scoreboard() {
       </div>
       <div class="score-vs">vs</div>
       <div>
-        <div class="score-label">claude opus 4.6</div>
+        <div class="score-label">single-shot baseline</div>
         <div class="score-num opus glow">{b.opus}</div>
       </div>
-      <div class="score-tag">tie {b.tie} · sponsored stack</div>
+      <div class="score-tag">tie {b.tie}</div>
     </div>
   );
 }

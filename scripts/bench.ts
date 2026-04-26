@@ -64,7 +64,7 @@ async function judgeWithDesigner(state: unknown, prompt: string) {
 async function main() {
   const rows: BenchRow[] = [];
   for (const p of PROMPTS) {
-    console.log(`\n→ ${p}`);
+    console.log(`\n> ${p}`);
     const [ours, opus] = await Promise.all([
       runPipeline({ from: "bench@local", subject: "bench", body: p })
         .catch(e => ({ score: 0, ms: 0, ok: false, state: { error: String(e) } })),
@@ -82,7 +82,7 @@ async function main() {
     });
     console.log(`  ours=${oursScore.toFixed(1)}/10 (${(ours.ms/1000).toFixed(1)}s) ` +
                 `vs opus=${opusScore.toFixed(1)}/10 (${(opus.ms/1000).toFixed(1)}s) ` +
-                `→ ${rows.at(-1)!.winner}`);
+                `=> ${rows.at(-1)!.winner}`);
   }
   writeFileSync("datasets/bench_results.json", JSON.stringify(rows, null, 2));
   const oursWins = rows.filter(r => r.winner === "ours").length;

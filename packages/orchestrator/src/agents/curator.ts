@@ -1,5 +1,4 @@
 import OpenAI from "openai";
-import { SYSTEM as _SYS } from "./common.ts";
 import { readFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -8,8 +7,6 @@ const here = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(here, "..", "..", "..", "..");
 const CURATOR_PROMPT = readFileSync(resolve(ROOT, "prompts/curator.md"), "utf8");
 
-// Curator runs on the same sched/idx endpoint (port 8002) but uses BASE Qwen3.5-9B,
-// no LoRA — task is mechanical formatting and base model handles it cleanly.
 const curatorClient = new OpenAI({
   apiKey: "EMPTY",
   baseURL: process.env.OPENAI_BASE_URL_CURATOR ?? process.env.OPENAI_BASE_URL_SCHED ?? "http://localhost:8002/v1",

@@ -1,5 +1,5 @@
 """
-Single LoRA SFT script for cybus-arcade. Run on the 8×H200 vast instance.
+Single LoRA SFT script for cybus-arcade. Run on the 8xH200 vast instance.
 
 Usage:
   python scripts/train.py --role scheduler --base Qwen/Qwen3-7B \
@@ -49,7 +49,7 @@ class JsonlMessagesDataset(Dataset):
                        padding="max_length", return_tensors="pt")
         ids = enc.input_ids.squeeze(0)
         attn = enc.attention_mask.squeeze(0)
-        # mask non-assistant tokens to -100 — train only on assistant outputs
+        # mask non-assistant tokens to -100; train only on assistant outputs
         labels = ids.clone()
         # heuristic: find last "<|im_start|>assistant" token, mask everything before
         text_tokens = self.tok.convert_ids_to_tokens(ids)
@@ -74,7 +74,7 @@ def lora_target_modules(model_name: str) -> list[str]:
 def build_model(args):
     is_vision = args.freeze_vision_encoder
     model_cls = AutoModelForVision2Seq if is_vision else AutoModelForCausalLM
-    # Don't use device_map='auto' under DDP/torchrun — Trainer handles per-rank placement.
+    # Don't use device_map='auto' under DDP/torchrun; Trainer handles per-rank placement.
     in_distributed = int(os.environ.get("WORLD_SIZE", "1")) > 1
     load_kwargs = {"torch_dtype": torch.bfloat16, "trust_remote_code": True}
     if not in_distributed:
@@ -137,7 +137,7 @@ def main():
         gradient_checkpointing=True,
         report_to="none",
         ddp_find_unused_parameters=False,
-        # FSDP disabled — 9B+LoRA fits per-H200 (141GB), DDP is sufficient and
+        # FSDP disabled; 9B+LoRA fits per-H200 (141GB), DDP is sufficient and
         # avoids PEFT auto_wrap_policy issues with Qwen3.5 layer detection.
     )
     try:

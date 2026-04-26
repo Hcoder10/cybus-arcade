@@ -19,7 +19,7 @@ def line_hash(line: str) -> str:
     try:
         d = json.loads(line)
         msgs = d.get("messages", [])
-        # hash on the assistant content only — that's the unique training signal
+        # Hash on the assistant content only.
         for m in msgs:
             if m.get("role") == "assistant":
                 return hashlib.md5(m["content"].encode()).hexdigest()

@@ -18,10 +18,13 @@ async function loadBench() {
 
 export function App() {
   useEffect(() => {
-    connect();
+    const disconnect = connect();
     void loadBench();
     const t = setInterval(loadBench, 30000);
-    return () => clearInterval(t);
+    return () => {
+      clearInterval(t);
+      disconnect();
+    };
   }, []);
   return (
     <div class="layout">

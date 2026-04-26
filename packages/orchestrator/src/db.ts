@@ -6,6 +6,8 @@ export const db = new Database(path);
 
 db.exec(`
 PRAGMA journal_mode = WAL;
+PRAGMA synchronous = NORMAL;
+PRAGMA busy_timeout = 5000;
 CREATE TABLE IF NOT EXISTS sessions (
   sid TEXT PRIMARY KEY, sender TEXT, subject TEXT, body TEXT,
   started_at INTEGER, ended_at INTEGER, ok INTEGER, share_url TEXT
@@ -18,6 +20,14 @@ CREATE TABLE IF NOT EXISTS queue (
   sid TEXT PRIMARY KEY, sender TEXT, subject TEXT, body TEXT, received_at INTEGER, status TEXT
 );
 `);
+
+interface QueueRow {
+  sid: SessionId;
+  sender: string;
+  subject: string;
+  body: string;
+  received_at: number;
+}
 
 const stmts = {
   insertJob: db.prepare(`INSERT OR IGNORE INTO queue(sid,sender,subject,body,received_at,status) VALUES (?,?,?,?,?, 'pending')`),
@@ -34,7 +44,7 @@ export function enqueue(j: Job) {
 }
 
 export function pullPending(): Job | null {
-  const r = stmts.pullJob.get() as any;
+  const r = stmts.pullJob.get() as QueueRow | null;
   if (!r) return null;
   return { sid: r.sid, from: r.sender, subject: r.subject, body: r.body, receivedAt: r.received_at };
 }
@@ -42,8 +52,8 @@ export function pullPending(): Job | null {
 export function finishJob(sid: SessionId) { stmts.finishJob.run(sid); }
 
 export function recordEvent(e: Event) {
-  const agent = "agent" in e ? (e as any).agent : null;
-  stmts.insertEvent.run((e as any).sid, e.t, agent, JSON.stringify(e), Date.now());
+  const agent = "agent" in e ? e.agent : null;
+  stmts.insertEvent.run(e.sid, e.t, agent, JSON.stringify(e), Date.now());
   if (e.t === "session.start") {
     stmts.startSession.run(e.sid, e.from, e.subject, e.body, e.ts);
   } else if (e.t === "session.end") {

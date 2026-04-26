@@ -8,23 +8,29 @@ const wh = SECRET ? new Webhook(SECRET) : null;
 
 function nanoid(n = 10) {
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-  let s = ""; for (let i = 0; i < n; i++) s += chars[Math.floor(Math.random() * chars.length)];
+  const bytes = crypto.getRandomValues(new Uint8Array(n));
+  let s = "";
+  for (let i = 0; i < n; i++) s += chars[bytes[i]! % chars.length];
   return s;
 }
 
 export async function handleWebhook(c: Context): Promise<Response> {
   const raw = await c.req.text();
-  let payload: any;
+  let payload: Record<string, any>;
   if (wh) {
     try {
-      payload = wh.verify(raw, Object.fromEntries(c.req.raw.headers));
+      payload = wh.verify(raw, Object.fromEntries(c.req.raw.headers)) as Record<string, any>;
     } catch (e) {
       if (e instanceof WebhookVerificationError) return c.text("bad signature", 400);
       throw e;
     }
   } else {
-    payload = JSON.parse(raw);
-    console.warn("[webhook] AGENTMAIL_WEBHOOK_SECRET unset — accepting unsigned payload (dev only)");
+    try {
+      payload = JSON.parse(raw);
+    } catch {
+      return c.text("bad json", 400);
+    }
+    console.warn("[webhook] AGENTMAIL_WEBHOOK_SECRET unset; accepting unsigned payload");
   }
   if (payload.event_type !== "message.received") return c.text("ignored", 202);
   const d = payload.data ?? {};

@@ -9,7 +9,6 @@ export interface IndexerOutput {
 }
 
 export async function index(subtask: { id: string; instruction: string }): Promise<IndexerOutput> {
-  // Ask the model what queries to issue
   let queries: string[];
   try {
     const r = await indexerClient.chat.completions.create({
@@ -22,27 +21,28 @@ export async function index(subtask: { id: string; instruction: string }): Promi
       ],
     });
     const out = tryParseJSON<IndexerOutput>(r.choices[0]?.message?.content ?? "");
-    queries = out?.queries_issued?.slice(0, 4) ?? [subtask.instruction];
+    queries = out?.queries_issued?.slice(0, 4) ?? [];
   } catch {
-    queries = [subtask.instruction];
+    queries = [];
   }
+  queries = [...new Set([subtask.instruction, ...queries])].slice(0, 4);
+  if (queries.length === 1) queries.push(`${subtask.instruction} Roblox API example`);
 
-  const chunks: IndexerOutput["chunks"] = [];
   const warnings: string[] = [];
-  await Promise.all(queries.map(async (q) => {
+  const groups = await Promise.all(queries.map(async (q) => {
     try {
       const res = await niaSearch(q, "universal", 6);
-      for (const r of res.results.slice(0, 3)) {
-        chunks.push({
-          title: r.source.display_name,
-          source: "creator-docs",
-          snippet: r.content.slice(0, 600),
-          why: `relevant to: ${q}`,
-        });
-      }
+      return res.results.slice(0, 3).map((r) => ({
+        title: r.source.display_name,
+        source: "creator-docs",
+        snippet: r.content.slice(0, 600),
+        why: `relevant to: ${q}`,
+      }));
     } catch (e) {
       warnings.push(`nia query failed: ${q} (${String(e).slice(0, 80)})`);
+      return [];
     }
   }));
+  const chunks = groups.flat();
   return { subtask_id: subtask.id, queries_issued: queries, chunks: chunks.slice(0, 8), warnings };
 }

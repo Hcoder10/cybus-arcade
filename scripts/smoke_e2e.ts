@@ -38,7 +38,7 @@ async function main() {
   console.log(`[2/4] webhook accepted, sid=${sid}`);
 
   // 3. open ws and watch for session.end
-  console.log("[3/4] opening ws and waiting for session.end…");
+  console.log("[3/4] opening ws and waiting for session.end...");
   const ws = new WebSocket(`ws://localhost:${PORT}/events`);
   const seen: string[] = [];
   let done = false;

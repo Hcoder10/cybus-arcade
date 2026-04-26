@@ -21,6 +21,7 @@ const apiKey = "EMPTY"; // vLLM OpenAI server doesn't need a real key
 const builderUrls = (process.env.OPENAI_BASE_URL_BUILDER ?? "http://localhost:8001/v1,http://localhost:8011/v1")
   .split(",").map(s => s.trim()).filter(Boolean);
 const builderPool = builderUrls.map(u => new OpenAI({ apiKey, baseURL: u }));
+if (builderPool.length === 0) throw new Error("OPENAI_BASE_URL_BUILDER resolved to no endpoints");
 let builderRR = 0;
 export const builderClient = new Proxy({} as OpenAI, {
   get(_t, prop) {

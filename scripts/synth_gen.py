@@ -44,13 +44,13 @@ ASYNC_CLIENT = anthropic.AsyncAnthropic(api_key=ANTHROPIC_KEY)
 HTTPX = httpx.AsyncClient(timeout=60.0)
 
 
-# ────────────────────────────── helpers ──────────────────────────────────
+# helpers
 
 PROMPT_TEMPLATES = [
     "Build a {genre} game where the player {twist}.",
     "Make me a {genre} where {twist}.",
     "I want a Roblox {genre} that has {twist}.",
-    "Quick {genre} game — {twist}.",
+    "Quick {genre} game - {twist}.",
 ]
 GENRES = ["tower defense", "obby", "racing", "fps", "sandbox",
           "party game", "rpg", "horror", "puzzle", "platformer", "survival"]
@@ -58,7 +58,7 @@ TWISTS = [
     "every wave the difficulty doubles", "you control gravity",
     "the map shrinks every 30s", "all enemies are sentient cubes",
     "there's a final boss with three phases", "every player has a unique power",
-    "the world is in low-gravity space", "color matters — match or die",
+    "the world is in low-gravity space", "color matters - match or die",
     "checkpoints heal you", "collecting coins triples your speed",
     "obstacles speak to you", "a clock ticks down to chaos",
 ]
@@ -75,7 +75,7 @@ def trace_id(setup_id: str, prompt: str) -> str:
     return hashlib.sha1(f"{setup_id}|{prompt}".encode()).hexdigest()[:12]
 
 
-# ──────────────────────────── Anthropic role play ────────────────────────
+# Anthropic role play
 
 _DEC = json.JSONDecoder()
 
@@ -154,7 +154,7 @@ async def haiku_judge(traj: dict) -> int:
     return int(digits[:2] or "0")
 
 
-# ─────────────────────────────── Nia tool ────────────────────────────────
+# Nia tool
 
 async def nia_search(query: str, mode: str = "universal", top_k: int = 8) -> dict:
     body: dict[str, Any] = {"mode": mode, "query": query, "top_k": top_k}
@@ -168,14 +168,14 @@ async def nia_search(query: str, mode: str = "universal", top_k: int = 8) -> dic
     return r.json()
 
 
-# ─────────────────────────── mock env (light shim) ───────────────────────
+# mock env
 
 class MockEnv:
     """Replicates what Studio Bridge would do. Uses your existing
     cybus mock_setups for property validation."""
     def __init__(self, setup: dict):
-        self.workspace: dict[str, dict] = {}     # path → properties
-        self.scripts: dict[str, str] = {}        # path → source
+        self.workspace: dict[str, dict] = {}     # path to properties
+        self.scripts: dict[str, str] = {}        # path to source
         self.allowed_classes: set[str] = setup.get("allowed_classes",
             {"Part","Script","LocalScript","ModuleScript","RemoteEvent",
              "BindableEvent","Folder","ScreenGui","TextLabel","TextButton",
@@ -226,7 +226,7 @@ class MockEnv:
         }
 
 
-# ─────────────────────────────── one trajectory ──────────────────────────
+# one trajectory
 
 async def run_one(setup: dict) -> dict | None:
     prompt = synth_user_prompt(setup)
@@ -314,7 +314,7 @@ async def run_one(setup: dict) -> dict | None:
     return trace
 
 
-# ─────────────────────────────── per-agent slices ─────────────────────────
+# per-agent slices
 
 def slice_trace(trace: dict) -> dict[str, list[dict]]:
     out = {"scheduler": [], "indexer": [], "designer": []}
@@ -347,7 +347,7 @@ def slice_trace(trace: dict) -> dict[str, list[dict]]:
     return out
 
 
-# ──────────────────────────────────  main ────────────────────────────────
+# main
 
 async def producer(queue: asyncio.Queue, setups: list[dict]):
     for s in setups:
@@ -388,7 +388,7 @@ def load_setups() -> list[dict]:
     if MOCKS.exists():
         files = sorted(MOCKS.glob("*.json"))[:20000]
         return [json.loads(p.read_text(encoding="utf-8")) for p in files]
-    print(f"[warn] mock setups not found at {MOCKS} — using synthetic stubs", file=sys.stderr)
+    print(f"[warn] mock setups not found at {MOCKS}; using synthetic stubs", file=sys.stderr)
     return [{"id": f"stub-{i}", "allowed_classes": list({"Part","Script","RemoteEvent","Folder","ScreenGui","TextLabel","Sound","ParticleEmitter","PointLight"})}
             for i in range(15000)]
 

@@ -24,7 +24,6 @@ body {
   overflow: hidden;
 }
 
-/* CRT scanlines */
 body::before {
   content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
   background: repeating-linear-gradient(0deg, transparent 0, transparent 2px, rgba(0,0,0,0.18) 3px, transparent 4px);
@@ -66,7 +65,6 @@ body::after {
   margin-bottom: 8px; text-transform: uppercase;
 }
 
-/* stage */
 .stage-subject { font-size: 28px; color: var(--primary); }
 .stage-meta    { color: var(--dim); font-size: 12px; margin-top: 4px; }
 .threads { margin-top: 16px; display: flex; flex-direction: column; gap: 6px; }
@@ -82,7 +80,7 @@ body::after {
 .thread .name { color: currentColor; font-weight: 700; letter-spacing: 0.05em; }
 .thread .body { color: var(--text); font-size: 14px; opacity: 0.9; min-height: 20px; }
 .thread .body::after {
-  content: "▎"; color: currentColor; margin-left: 2px; animation: blink 1s infinite;
+  content: "|"; color: currentColor; margin-left: 2px; animation: blink 1s infinite;
 }
 .thread.done .body::after { content: ""; }
 
@@ -92,7 +90,6 @@ body::after {
 .color-debugger  { color: var(--red); }
 .color-designer  { color: var(--magenta); }
 
-/* tile grid */
 .grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); height: 100%; align-content: start; }
 .tile {
   background: var(--bg2); border: 1px solid var(--grid);
@@ -110,7 +107,6 @@ body::after {
   font-size: 12px; letter-spacing: 0.1em;
 }
 
-/* scoreboard */
 .scoreboard { display: flex; gap: 24px; align-items: center; justify-content: space-between; }
 .score-num  { font-size: 56px; font-weight: 700; line-height: 1; }
 .score-num.ours { color: var(--primary); }
@@ -122,7 +118,6 @@ body::after {
   font-size: 12px; letter-spacing: 0.15em;
 }
 
-/* utility */
 .row { display: flex; align-items: center; gap: 8px; }
 .dim { color: var(--dim); }
 .mono { font-family: "JetBrains Mono", ui-monospace, monospace; }

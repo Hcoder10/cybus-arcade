@@ -10,15 +10,15 @@ export function Stage() {
     return (
       <div class="region">
         <h2>Now Building</h2>
-        <div class="dim" style={{ marginTop: 12, fontSize: 14 }}>idle — email cybus-arcade@agentmail.to to build a Roblox game</div>
+        <div class="dim" style={{ marginTop: 12, fontSize: 14 }}>idle - email cybus-arcade@agentmail.to to build a Roblox game</div>
       </div>
     );
   }
   return (
     <div class="region">
       <h2>Now Building</h2>
-      <div class="stage-subject glow">📧 {s.subject}</div>
-      <div class="stage-meta">from {s.from} · {((Date.now() - s.startedAt) / 1000).toFixed(0)}s elapsed</div>
+      <div class="stage-subject glow">{s.subject}</div>
+      <div class="stage-meta">from {s.from} / {((Date.now() - s.startedAt) / 1000).toFixed(0)}s elapsed</div>
       <div class="threads">
         {ORDER.map((a) => <Thread key={a} s={s.threads[a]} />)}
       </div>
